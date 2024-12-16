@@ -8,7 +8,7 @@ use winit::dpi::LogicalSize;
 use winit::event::{Event, WindowEvent};
 use winit::event_loop::EventLoop;
 use winit::keyboard::KeyCode;
-use winit::window::WindowBuilder;
+use winit::window::{Window, WindowBuilder};
 use winit_input_helper::WinitInputHelper;
 use world::World;
 
@@ -31,12 +31,7 @@ fn main() -> Result<(), Error> {
             .unwrap()
     };
 
-    let mut pixels = {
-        let window_size = window.inner_size();
-        let surface_texture = SurfaceTexture::new(window_size.width, window_size.height, &window);
-        Pixels::new(WIDTH, HEIGHT, surface_texture)?
-    };
-
+    let mut pixels = build_pixels(&window)?;
     let mut world = World::new();
     let mut input = WinitInputHelper::new();
 
@@ -78,6 +73,12 @@ fn main() -> Result<(), Error> {
         }
     });
     res.map_err(|e| Error::UserDefined(Box::new(e)))
+}
+
+fn build_pixels(window: &Window) -> Result<Pixels, Error> {
+    let window_size = window.inner_size();
+    let surface_texture = SurfaceTexture::new(window_size.width, window_size.height, &window);
+    Pixels::new(WIDTH, HEIGHT, surface_texture)
 }
 
 fn log_error<E: std::error::Error + 'static>(method_name: &str, err: E) {
