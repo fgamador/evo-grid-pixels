@@ -20,17 +20,7 @@ const HEIGHT: u32 = 240;
 fn main() -> Result<(), Error> {
     env_logger::init();
     let event_loop = EventLoop::new().unwrap();
-
-    let window = {
-        let size = LogicalSize::new(WIDTH as f64, HEIGHT as f64);
-        WindowBuilder::new()
-            .with_title("Hello Pixels")
-            .with_inner_size(size)
-            .with_min_inner_size(size)
-            .build(&event_loop)
-            .unwrap()
-    };
-
+    let window = build_window(&event_loop);
     let mut pixels = build_pixels(&window)?;
     let mut world = World::new();
     let mut input = WinitInputHelper::new();
@@ -73,6 +63,16 @@ fn main() -> Result<(), Error> {
         }
     });
     res.map_err(|e| Error::UserDefined(Box::new(e)))
+}
+
+fn build_window(event_loop: &EventLoop<()>) -> Window {
+    let size = LogicalSize::new(WIDTH as f64, HEIGHT as f64);
+    WindowBuilder::new()
+        .with_title("Hello Pixels")
+        .with_inner_size(size)
+        .with_min_inner_size(size)
+        .build(&event_loop)
+        .unwrap()
 }
 
 fn build_pixels(window: &Window) -> Result<Pixels, Error> {
