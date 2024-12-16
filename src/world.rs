@@ -1,4 +1,6 @@
-use crate::{BOX_SIZE, HEIGHT, WIDTH};
+use crate::{HEIGHT, WIDTH};
+
+const BOX_SIZE: i16 = 64;
 
 /// Representation of the application state. In this example, a box will bounce around the screen.
 pub struct World {
