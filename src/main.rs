@@ -10,9 +10,7 @@ use winit::event_loop::EventLoop;
 use winit::keyboard::KeyCode;
 use winit::window::{Window, WindowBuilder};
 use winit_input_helper::WinitInputHelper;
-use world::World;
-
-mod world;
+use evo_grid::world::World;
 
 const WIDTH: u32 = 320;
 const HEIGHT: u32 = 240;
