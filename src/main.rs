@@ -22,7 +22,7 @@ fn main() -> Result<(), Error> {
     let event_loop = EventLoop::new().unwrap();
     let window = build_window(&event_loop);
     let mut pixels = build_pixels(&window)?;
-    let mut world = World::new();
+    let mut world = World::new(WIDTH, HEIGHT);
     let mut input = WinitInputHelper::new();
 
     let res = event_loop.run(|event, elwt| {
