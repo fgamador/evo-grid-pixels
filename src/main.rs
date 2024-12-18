@@ -12,6 +12,7 @@ use winit::{
     keyboard::KeyCode,
     window::WindowBuilder,
 };
+use winit::window::Window;
 use winit_input_helper::WinitInputHelper;
 
 const WIDTH: u32 = 400;
@@ -20,28 +21,13 @@ const HEIGHT: u32 = 300;
 fn main() -> Result<(), Error> {
     env_logger::init();
     let event_loop = EventLoop::new().unwrap();
+    let window = build_window(&event_loop);
+    let mut pixels = build_pixels(&window)?;
+
+    let mut grid = WorldGrid::new_random(WIDTH as usize, HEIGHT as usize);
+
     let mut input = WinitInputHelper::new();
-
-    let window = {
-        let size = LogicalSize::new(WIDTH as f64, HEIGHT as f64);
-        let scaled_size = LogicalSize::new(WIDTH as f64 * 3.0, HEIGHT as f64 * 3.0);
-        WindowBuilder::new()
-            .with_title("Conway's Game of Life")
-            .with_inner_size(scaled_size)
-            .with_min_inner_size(size)
-            .build(&event_loop)
-            .unwrap()
-    };
-
-    let mut pixels = {
-        let window_size = window.inner_size();
-        let surface_texture = SurfaceTexture::new(window_size.width, window_size.height, &window);
-        Pixels::new(WIDTH, HEIGHT, surface_texture)?
-    };
-
-    let mut life = WorldGrid::new_random(WIDTH as usize, HEIGHT as usize);
     let mut paused = false;
-
     let mut draw_state: Option<bool> = None;
 
     let res = event_loop.run(|event, elwt| {
@@ -51,7 +37,7 @@ fn main() -> Result<(), Error> {
             ..
         } = event
         {
-            life.draw(pixels.frame_mut());
+            grid.draw(pixels.frame_mut());
             if let Err(err) = pixels.render() {
                 log_error("pixels.render", err);
                 elwt.exit();
@@ -75,7 +61,7 @@ fn main() -> Result<(), Error> {
                 paused = true;
             }
             if input.key_pressed(KeyCode::KeyR) {
-                life.randomize();
+                grid.randomize();
             }
             // Handle mouse. This is a bit involved since support some simple
             // line drawing (mostly because it makes nice looking patterns).
@@ -103,7 +89,7 @@ fn main() -> Result<(), Error> {
 
             if input.mouse_pressed(0) {
                 debug!("Mouse click at {mouse_cell:?}");
-                draw_state = Some(life.toggle(mouse_cell.0, mouse_cell.1));
+                draw_state = Some(grid.toggle(mouse_cell.0, mouse_cell.1));
             } else if let Some(draw_alive) = draw_state {
                 let release = input.mouse_released(0);
                 let held = input.mouse_held(0);
@@ -113,7 +99,7 @@ fn main() -> Result<(), Error> {
                 // in the middle of drawing, keep going.
                 if release || held {
                     debug!("Draw line of {draw_alive:?}");
-                    life.set_line(
+                    grid.set_line(
                         mouse_prev_cell.0,
                         mouse_prev_cell.1,
                         mouse_cell.0,
@@ -136,12 +122,29 @@ fn main() -> Result<(), Error> {
                 }
             }
             if !paused || input.key_pressed_os(KeyCode::Space) {
-                life.update();
+                grid.update();
             }
             window.request_redraw();
         }
     });
     res.map_err(|e| Error::UserDefined(Box::new(e)))
+}
+
+fn build_window(event_loop: &EventLoop<()>) -> Window {
+    let size = LogicalSize::new(WIDTH as f64, HEIGHT as f64);
+    let scaled_size = LogicalSize::new(WIDTH as f64 * 3.0, HEIGHT as f64 * 3.0);
+    WindowBuilder::new()
+        .with_title("Conway's Game of Life")
+        .with_inner_size(scaled_size)
+        .with_min_inner_size(size)
+        .build(&event_loop)
+        .unwrap()
+}
+
+fn build_pixels(window: &Window) -> Result<Pixels, Error> {
+    let window_size = window.inner_size();
+    let surface_texture = SurfaceTexture::new(window_size.width, window_size.height, &window);
+    Pixels::new(WIDTH, HEIGHT, surface_texture)
 }
 
 fn log_error<E: std::error::Error + 'static>(method_name: &str, err: E) {
