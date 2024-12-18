@@ -216,6 +216,12 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "8b37c88a63ffd85d15b406896cc343916d7cf57838a847b3a6f2ca5d39a5695a"
 
 [[package]]
+name = "byteorder"
+version = "1.5.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "1fd0f2584146f6f2ef48085050886acf353beff7305ebd1ae69500e27c67f64b"
+
+[[package]]
 name = "bytes"
 version = "1.9.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -275,6 +281,12 @@ name = "cfg_aliases"
 version = "0.1.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "fd16c4719339c4530435d38e511904438d07cce7950afa3718a84ac36c10e89e"
+
+[[package]]
+name = "clipline"
+version = "0.1.2"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "01c033212f55b799c43650c2fb12866ba8fe873e5786e7e649810c4dc9a76561"
 
 [[package]]
 name = "codespan-reporting"
@@ -433,6 +445,12 @@ checksum = "8070547d90d1b98debb6626421d742c897942bbb78f047694a5eb769495eccd6"
 [[package]]
 name = "evo-grid"
 version = "0.1.0"
+dependencies = [
+ "byteorder",
+ "clipline",
+ "getrandom",
+ "randomize",
+]
 
 [[package]]
 name = "evo-grid-pixels"
@@ -1099,6 +1117,12 @@ checksum = "b5b9d34b8991d19d98081b46eacdd8eb58c6f2b201139f7c5f643cc155a633af"
 dependencies = [
  "proc-macro2",
 ]
+
+[[package]]
+name = "randomize"
+version = "3.0.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "88c38c99b51f33c9fcc655252bf02ac8048eb70f35244e4697b0de9c473e940a"
 
 [[package]]
 name = "range-alloc"
