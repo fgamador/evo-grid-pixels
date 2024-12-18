@@ -2,7 +2,7 @@
 #![forbid(unsafe_code)]
 
 use error_iter::ErrorIter as _;
-use evo_grid::world::ConwayGrid;
+use evo_grid::world::WorldGrid;
 use log::{debug, error};
 use pixels::{Error, Pixels, SurfaceTexture};
 use winit::{
@@ -39,7 +39,7 @@ fn main() -> Result<(), Error> {
         Pixels::new(WIDTH, HEIGHT, surface_texture)?
     };
 
-    let mut life = ConwayGrid::new_random(WIDTH as usize, HEIGHT as usize);
+    let mut life = WorldGrid::new_random(WIDTH as usize, HEIGHT as usize);
     let mut paused = false;
 
     let mut draw_state: Option<bool> = None;
