@@ -3,7 +3,7 @@
 
 use error_iter::ErrorIter as _;
 use evo_grid::world::WorldGrid;
-use log::{debug, error};
+use log::{/* debug, */ error};
 use pixels::{Error, Pixels, SurfaceTexture};
 use winit::{
     dpi::LogicalSize,
