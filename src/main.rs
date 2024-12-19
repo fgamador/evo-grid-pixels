@@ -110,7 +110,7 @@ pub fn draw_grid_cells(grid: &WorldGrid, screen: &mut [u8]) {
         let color_rgba = if cell.alive {
             [0, 0xff, 0xff, 0xff]
         } else {
-            [0, 0, cell.heat, 0xff]
+            [0, 0, 0, 0xff]
         };
         pixel.copy_from_slice(&color_rgba);
     }
