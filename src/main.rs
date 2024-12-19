@@ -36,7 +36,7 @@ fn main() -> Result<(), Error> {
             ..
         } = event
         {
-            grid.draw(pixels.frame_mut());
+            draw_grid_cells(&grid, pixels.frame_mut());
             if let Err(err) = pixels.render() {
                 log_error("pixels.render", err);
                 elwt.exit();
@@ -101,5 +101,17 @@ fn log_error<E: std::error::Error + 'static>(method_name: &str, err: E) {
     error!("{method_name}() failed: {err}");
     for source in err.sources().skip(1) {
         error!("  Caused by: {source}");
+    }
+}
+
+pub fn draw_grid_cells(grid: &WorldGrid, screen: &mut [u8]) {
+    debug_assert_eq!(screen.len(), 4 * grid.num_cells());
+    for (cell, pixel) in grid.cells_iter().zip(screen.chunks_exact_mut(4)) {
+        let color_rgba = if cell.alive {
+            [0, 0xff, 0xff, 0xff]
+        } else {
+            [0, 0, cell.heat, 0xff]
+        };
+        pixel.copy_from_slice(&color_rgba);
     }
 }
