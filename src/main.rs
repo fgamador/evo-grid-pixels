@@ -24,7 +24,7 @@ fn main() -> Result<(), Error> {
     let window = build_window(&event_loop);
     let mut pixels = build_pixels(&window)?;
 
-    let mut grid = WorldGrid::new_random(WIDTH as usize, HEIGHT as usize);
+    let mut grid = WorldGrid::new(WIDTH as usize, HEIGHT as usize);
 
     let mut input = WinitInputHelper::new();
     let mut paused = false;
@@ -100,10 +100,15 @@ fn build_pixels(window: &Window) -> Result<Pixels, Error> {
 pub fn draw_grid_cells(grid: &WorldGrid, screen: &mut [u8]) {
     debug_assert_eq!(screen.len(), 4 * grid.num_cells());
     for (cell, pixel) in grid.cells_iter().zip(screen.chunks_exact_mut(4)) {
-        let color_rgb = cell.substance.color;
-        let color_alpha = (cell.substance.amount * 0xff as f32) as u8;
-        let color_rgba = [color_rgb[0], color_rgb[1], color_rgb[2], color_alpha];
-        pixel.copy_from_slice(&color_rgba);
+        if let Some(substance) = cell.substance {
+            let color_rgb = substance.color;
+            let color_alpha = (substance.amount * 0xff as f32) as u8;
+            let color_rgba = [color_rgb[0], color_rgb[1], color_rgb[2], color_alpha];
+            pixel.copy_from_slice(&color_rgba);
+        } else {
+            let color_rgba = [0, 0, 0, 0xff];
+            pixel.copy_from_slice(&color_rgba);
+        }
     }
 }
 
