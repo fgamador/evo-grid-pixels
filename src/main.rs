@@ -60,9 +60,6 @@ fn main() -> Result<(), Error> {
                 // Space is frame-step, so ensure we're paused
                 paused = true;
             }
-            // if input.key_pressed(KeyCode::KeyR) {
-            //     grid.randomize();
-            // }
 
             // Resize the window
             if let Some(size) = input.window_resized() {
