@@ -4,7 +4,8 @@
 use error_iter::ErrorIter as _;
 use evo_grid::world::WorldGrid;
 use log::{/* debug, */ error};
-use pixels::{Error, Pixels, SurfaceTexture};
+use pixels::{Error, Pixels, PixelsBuilder, SurfaceTexture};
+use pixels::wgpu::Color;
 use winit::{
     dpi::LogicalSize,
     event::{Event, WindowEvent},
@@ -94,21 +95,28 @@ fn build_window(event_loop: &EventLoop<()>) -> Window {
 fn build_pixels(window: &Window) -> Result<Pixels, Error> {
     let window_size = window.inner_size();
     let surface_texture = SurfaceTexture::new(window_size.width, window_size.height, &window);
-    Pixels::new(WIDTH, HEIGHT, surface_texture)
+    PixelsBuilder::new(WIDTH, HEIGHT, surface_texture)
+        .clear_color(Color {
+            r: 1.0,
+            g: 1.0,
+            b: 1.0,
+            a: 1.0,
+        })
+        .build()
 }
 
 pub fn draw_grid_cells(grid: &WorldGrid, screen: &mut [u8]) {
     debug_assert_eq!(screen.len(), 4 * grid.num_cells());
     for (cell, pixel) in grid.cells_iter().zip(screen.chunks_exact_mut(4)) {
-        if let Some(substance) = cell.substance {
-            let color_rgb = substance.color;
-            let color_alpha = (substance.amount * 0xff as f32) as u8;
-            let color_rgba = [color_rgb[0], color_rgb[1], color_rgb[2], color_alpha];
-            pixel.copy_from_slice(&color_rgba);
-        } else {
-            let color_rgba = [0, 0, 0, 0xff];
-            pixel.copy_from_slice(&color_rgba);
-        }
+        let color_rgba =
+            if let Some(substance) = cell.substance {
+                let color_rgb = substance.color;
+                let color_alpha = (substance.amount * 0xff as f32) as u8;
+                [color_rgb[0], color_rgb[1], color_rgb[2], color_alpha]
+            } else {
+                [0xff, 0xff, 0xff, 0xff]
+            };
+        pixel.copy_from_slice(&color_rgba);
     }
 }
 
