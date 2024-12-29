@@ -2,7 +2,7 @@
 #![forbid(unsafe_code)]
 
 use error_iter::ErrorIter as _;
-use evo_grid::world::WorldGrid;
+use evo_grid::world::{GridCell, WorldGrid};
 use log::{/* debug, */ error};
 use pixels::{Error, Pixels, PixelsBuilder, SurfaceTexture};
 use pixels::wgpu::Color;
@@ -97,19 +97,23 @@ fn build_pixels(window: &Window) -> Result<Pixels, Error> {
         .build()
 }
 
-pub fn draw_grid_cells(grid: &WorldGrid, screen: &mut [u8]) {
+fn draw_grid_cells(grid: &WorldGrid, screen: &mut [u8]) {
     debug_assert_eq!(screen.len(), 4 * grid.num_cells());
     for (cell, pixel) in grid.cells_iter().zip(screen.chunks_exact_mut(4)) {
-        let color_rgba =
-            if let Some(substance) = cell.substance {
-                let color_rgb = substance.color;
-                let color_alpha = (substance.amount * 0xff as f32) as u8;
-                [color_rgb[0], color_rgb[1], color_rgb[2], color_alpha]
-            } else {
-                [0, 0, 0, 0]
-            };
-        pixel.copy_from_slice(&color_rgba);
+        render_cell(cell, pixel);
     }
+}
+
+fn render_cell(cell: &GridCell, pixel: &mut [u8]) {
+    let color_rgba =
+        if let Some(substance) = cell.substance {
+            let color_rgb = substance.color;
+            let color_alpha = (substance.amount * 0xff as f32) as u8;
+            [color_rgb[0], color_rgb[1], color_rgb[2], color_alpha]
+        } else {
+            [0, 0, 0, 0]
+        };
+    pixel.copy_from_slice(&color_rgba);
 }
 
 fn log_error<E: std::error::Error + 'static>(method_name: &str, err: E) {
