@@ -100,11 +100,12 @@ fn build_pixels(window: &Window) -> Result<Pixels, Error> {
 fn draw_grid_cells(grid: &WorldGrid, screen: &mut [u8]) {
     debug_assert_eq!(screen.len(), 4 * grid.num_cells());
     for (cell, pixel) in grid.cells_iter().zip(screen.chunks_exact_mut(4)) {
-        render_cell(cell, pixel);
+        let color_rgba = render_cell(cell);
+        pixel.copy_from_slice(&color_rgba);
     }
 }
 
-fn render_cell(cell: &GridCell, pixel: &mut [u8]) {
+fn render_cell(cell: &GridCell) -> [u8; 4] {
     let color_rgba =
         if let Some(substance) = cell.substance {
             let color_rgb = substance.color;
@@ -113,7 +114,7 @@ fn render_cell(cell: &GridCell, pixel: &mut [u8]) {
         } else {
             [0, 0, 0, 0]
         };
-    pixel.copy_from_slice(&color_rgba);
+    color_rgba
 }
 
 fn log_error<E: std::error::Error + 'static>(method_name: &str, err: E) {
