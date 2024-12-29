@@ -2,7 +2,7 @@
 #![forbid(unsafe_code)]
 
 use error_iter::ErrorIter as _;
-use evo_grid::world::{GridCell, WorldGrid};
+use evo_grid::world::{GridCell, Substance, WorldGrid};
 use log::{/* debug, */ error};
 use pixels::{Error, Pixels, PixelsBuilder, SurfaceTexture};
 use pixels::wgpu::Color;
@@ -106,15 +106,18 @@ fn draw_grid_cells(grid: &WorldGrid, screen: &mut [u8]) {
 }
 
 fn render_cell(cell: &GridCell) -> [u8; 4] {
-    let color_rgba =
-        if let Some(substance) = cell.substance {
-            let color_rgb = substance.color;
-            let color_alpha = (substance.amount * 0xff as f32) as u8;
-            [color_rgb[0], color_rgb[1], color_rgb[2], color_alpha]
-        } else {
-            [0, 0, 0, 0]
-        };
+    let color_rgba = render_cell_substance(cell.substance);
     color_rgba
+}
+
+fn render_cell_substance(cell_substance: Option<Substance>) -> [u8; 4] {
+    if let Some(substance) = cell_substance {
+        let color_rgb = substance.color;
+        let color_alpha = (substance.amount * 0xff as f32) as u8;
+        [color_rgb[0], color_rgb[1], color_rgb[2], color_alpha]
+    } else {
+        [0, 0, 0, 0]
+    }
 }
 
 fn log_error<E: std::error::Error + 'static>(method_name: &str, err: E) {
