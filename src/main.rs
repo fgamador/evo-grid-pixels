@@ -149,7 +149,7 @@ fn alpha_blend(above: [u8; 4], below: [u8; 4]) -> [u8; 4] {
 fn color_as_fractions(color: [u8; 4]) -> [f32; 4] {
     let mut result: [f32; 4] = [0.0, 0.0, 0.0, 0.0];
     for i in 0..=3 {
-        result[i] = color[i] as f32 / 0xff as f32
+        result[i] = color[i] as f32 / 0xff as f32;
     }
     result
 }
