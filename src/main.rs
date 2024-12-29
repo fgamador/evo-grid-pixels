@@ -93,12 +93,7 @@ fn build_pixels(window: &Window) -> Result<Pixels, Error> {
     let window_size = window.inner_size();
     let surface_texture = SurfaceTexture::new(window_size.width, window_size.height, &window);
     PixelsBuilder::new(WIDTH, HEIGHT, surface_texture)
-        .clear_color(Color {
-            r: 1.0,
-            g: 1.0,
-            b: 1.0,
-            a: 1.0,
-        })
+        .clear_color(Color::WHITE)
         .build()
 }
 
@@ -111,7 +106,7 @@ pub fn draw_grid_cells(grid: &WorldGrid, screen: &mut [u8]) {
                 let color_alpha = (substance.amount * 0xff as f32) as u8;
                 [color_rgb[0], color_rgb[1], color_rgb[2], color_alpha]
             } else {
-                [0xff, 0xff, 0xff, 0xff]
+                [0, 0, 0, 0]
             };
         pixel.copy_from_slice(&color_rgba);
     }
