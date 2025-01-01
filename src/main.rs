@@ -2,7 +2,7 @@
 #![forbid(unsafe_code)]
 
 use error_iter::ErrorIter as _;
-use evo_grid::world::{Creature, GridCell, Substance, WorldGrid};
+use evo_grid::world::{Creature, GridCell, Substance, World};
 use log::{/* debug, */ error};
 use pixels::{Error, Pixels, PixelsBuilder, SurfaceTexture};
 use pixels::wgpu::Color;
@@ -25,7 +25,7 @@ fn main() -> Result<(), Error> {
     let window = build_window(&event_loop);
     let mut pixels = build_pixels(&window)?;
 
-    let mut grid = WorldGrid::new(WIDTH as usize, HEIGHT as usize);
+    let mut world = World::new(WIDTH as usize, HEIGHT as usize);
 
     let mut input = WinitInputHelper::new();
     let mut paused = false;
@@ -37,7 +37,7 @@ fn main() -> Result<(), Error> {
             ..
         } = event
         {
-            draw_grid_cells(&grid, pixels.frame_mut());
+            draw_grid_cells(&world, pixels.frame_mut());
             if let Err(err) = pixels.render() {
                 log_error("pixels.render", err);
                 elwt.exit();
@@ -70,7 +70,7 @@ fn main() -> Result<(), Error> {
                 }
             }
             if !paused || input.key_pressed_os(KeyCode::Space) {
-                grid.update();
+                world.update();
             }
             window.request_redraw();
         }
@@ -97,9 +97,9 @@ fn build_pixels(window: &Window) -> Result<Pixels, Error> {
         .build()
 }
 
-fn draw_grid_cells(grid: &WorldGrid, screen: &mut [u8]) {
-    debug_assert_eq!(screen.len(), 4 * grid.num_cells());
-    for (cell, pixel) in grid.cells_iter().zip(screen.chunks_exact_mut(4)) {
+fn draw_grid_cells(world: &World, screen: &mut [u8]) {
+    debug_assert_eq!(screen.len(), 4 * world.num_cells());
+    for (cell, pixel) in world.cells_iter().zip(screen.chunks_exact_mut(4)) {
         let color_rgba = render_cell(cell);
         pixel.copy_from_slice(&color_rgba);
     }
