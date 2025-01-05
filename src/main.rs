@@ -82,7 +82,7 @@ fn build_window(event_loop: &EventLoop<()>) -> Window {
     let size = LogicalSize::new(WIDTH as f64, HEIGHT as f64);
     let scaled_size = LogicalSize::new(WIDTH as f64 * 3.0, HEIGHT as f64 * 3.0);
     WindowBuilder::new()
-        .with_title("Conway's Game of Life")
+        .with_title("Evo")
         .with_inner_size(scaled_size)
         .with_min_inner_size(size)
         .build(&event_loop)
