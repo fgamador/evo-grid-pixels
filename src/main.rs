@@ -106,9 +106,7 @@ fn draw_grid_cells(world: &World, screen: &mut [u8]) {
 }
 
 fn render_cell(cell: &GridCell) -> [u8; 4] {
-    let mut color_rgba = render_cell_creature(cell.creature);
-    color_rgba = alpha_blend(render_cell_substance(cell.substance), color_rgba);
-    color_rgba
+    alpha_blend(render_cell_substance(cell.substance), render_cell_creature(cell.creature))
 }
 
 fn render_cell_creature(cell_creature: Option<Creature>) -> [u8; 4] {
