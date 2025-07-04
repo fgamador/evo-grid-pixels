@@ -25,7 +25,7 @@ fn main() -> Result<(), Error> {
     let window = build_window(&event_loop);
     let mut pixels = build_pixels(&window)?;
 
-    let mut world = World::new(WIDTH as usize, HEIGHT as usize);
+    let mut world = World::new(WIDTH as usize, HEIGHT as usize, evo_grid::world::Random::new());
 
     let mut input = WinitInputHelper::new();
     let mut paused = false;
@@ -143,7 +143,7 @@ fn alpha_blend(above: [u8; 4], below: [u8; 4]) -> [u8; 4] {
     for i in 0..=2 {
         result[i] = (above[i] * above_alpha + below[i] * below_alpha * (1.0 - above_alpha)) / result_alpha;
     }
-    return color_as_bytes(result);
+    color_as_bytes(result)
 }
 
 fn color_as_fractions(color: [u8; 4]) -> [f32; 4] {
